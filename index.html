@@ -108,11 +108,13 @@ h1,h2,h3,p{margin:0}
 .sun{position:absolute;right:16%;top:12%;width:72px;height:72px;border-radius:50%;
   background:radial-gradient(circle,#FFF3C4,#FFC56B);box-shadow:0 0 46px rgba(255,200,110,.75);pointer-events:none}
 .far{bottom:var(--roadH);height:140px;background-repeat:repeat-x;background-position:0 bottom;opacity:.85}
-.clouds{top:5%;height:52%;background-repeat:repeat-x;background-size:auto 100%;opacity:.5}
+.clouds{top:4%;height:40%;background-repeat:repeat-x;background-size:auto 100%;opacity:.5}
+.mid{bottom:var(--roadH);height:96px;background-repeat:repeat-x;background-position:0 bottom;opacity:.95}
 .road{
   bottom:0;height:var(--roadH);
-  background:linear-gradient(180deg,#6E4668 0%,#5A3757 100%);
-  border-top:4px solid rgba(255,255,255,.22);
+  background:linear-gradient(180deg,#7A4F72 0%,#684263 36%,#52304F 100%);
+  border-top:5px solid rgba(255,255,255,.3);
+  box-shadow:0 7px 0 rgba(255,255,255,.08) inset;
 }
 .dash{position:absolute;left:0;right:0;top:46%;height:5px;background-repeat:repeat-x;opacity:.55}
 .actors{position:absolute;left:0;right:0;bottom:0;top:0}
@@ -121,6 +123,9 @@ h1,h2,h3,p{margin:0}
 .rider.blink{animation:blink .22s steps(2) infinite}
 .rider.down .bike{animation:none}
 .rider svg,.obs svg,.pick svg{display:block;transform:scale(var(--scale,1));transform-origin:0 100%}
+.pick svg{filter:drop-shadow(0 0 7px rgba(255,120,160,.85))}
+.guy{animation:pedal .5s ease-in-out infinite}
+.rider.down .guy{animation:none}
 .wheel{transform-box:fill-box;transform-origin:50% 50%;animation:spin .5s linear infinite}
 .rider.down .wheel{animation:none}
 
@@ -219,6 +224,7 @@ h1,h2,h3,p{margin:0}
 @keyframes hintPulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.05)}}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pedal{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.6px)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
 @keyframes chipPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}30%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-80%) scale(.95)}}
@@ -227,7 +233,7 @@ h1,h2,h3,p{margin:0}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.08s !important}
-  .wheel{animation:none !important}
+  .wheel,.guy{animation:none !important}
 }
 @media (max-height:620px){
   .hero{height:min(19vh,130px)}
@@ -270,6 +276,7 @@ h1,h2,h3,p{margin:0}
       <div class="sun"></div>
       <div class="layer clouds" id="clouds"></div>
       <div class="layer far" id="far"></div>
+      <div class="layer mid" id="mid"></div>
       <div class="layer road"><div class="dash" id="dash"></div></div>
       <div class="actors" id="actors">
         <div class="rider" id="rider"></div>
@@ -389,7 +396,7 @@ const CONFIG = {
     items: [
       { label:"Clue 1", text:"Your hands will be part of the plan 🙌" },
       { label:"Clue 2", text:"There will be wine 🍷" },
-      { label:"Clue 3", text:"Something will grow out of it 🌱" }
+      { label:"Clue 3", text:"Something for you to take home 🌱" }
     ],
     note: "Dress code: cute but comfy. Nothing you'd cry over if it gets a little earth on it.",
     teaser: "Then the night continues with food and music 🎶"
@@ -399,15 +406,15 @@ const CONFIG = {
 
   // --- game feel ---
   game: {
-    rideSeconds: 14,     // tuned so a clean ride lands around 18s
+    rideSeconds: 15,     // tuned so a clean ride lands around 18s
     maxSeconds: 26,      // he arrives by now no matter what
-    speed0: 230,         // px/sec at the start
-    speed1: 330,         // px/sec at the end
+    speed0: 196,         // px/sec at the start
+    speed1: 268,         // px/sec at the end
     gravity: 2300,
     jumpV: 780,
     hearts: 3,
-    gapMin: 1.05,        // seconds between obstacles (never less: always jumpable)
-    gapVar: 0.75
+    gapMin: 1.45,        // seconds between obstacles (never less: always jumpable)
+    gapVar: 0.85
   }
 };
 
@@ -509,50 +516,65 @@ function buzz(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
    ============================================================ */
 function riderSVG(id){
   return ''
-  + '<svg id="' + id + '" width="150" height="118" viewBox="0 0 150 118" aria-hidden="true">'
-  +  '<defs><linearGradient id="sk-' + id + '" x1="0" y1="0" x2="0" y2="1">'
-  +   '<stop offset="0" stop-color="#F3B089"/><stop offset="1" stop-color="#DE9068"/></linearGradient></defs>'
+  + '<svg id="' + id + '" width="150" height="120" viewBox="0 0 150 120" aria-hidden="true">'
+  +  '<defs>'
+  +   '<linearGradient id="sk-' + id + '" x1="0" y1="0" x2="0" y2="1">'
+  +    '<stop offset="0" stop-color="#F7B890"/><stop offset="1" stop-color="#DD8F66"/></linearGradient>'
+  +   '<linearGradient id="sh-' + id + '" x1="0" y1="0" x2="0" y2="1">'
+  +    '<stop offset="0" stop-color="#FF8E6B"/><stop offset="1" stop-color="#EF5F3C"/></linearGradient>'
+  +  '</defs>'
+  +  '<ellipse cx="74" cy="116" rx="56" ry="5" fill="rgba(55,18,48,.25)"/>'
   +  '<g class="bike">'
-  +   '<g class="wheel"><circle cx="29" cy="92" r="23" fill="none" stroke="#3B2340" stroke-width="5"/>'
-  +    '<path d="M29 71v42M8 92h42M14 77l30 30M44 77L14 107" stroke="#3B2340" stroke-width="2.4" opacity=".55"/></g>'
-  +   '<g class="wheel"><circle cx="118" cy="92" r="23" fill="none" stroke="#3B2340" stroke-width="5"/>'
-  +    '<path d="M118 71v42M97 92h42M103 77l30 30M133 77l-30 30" stroke="#3B2340" stroke-width="2.4" opacity=".55"/></g>'
-  +   '<path d="M29 92l31-30h28l-16 30zM88 62l30 30M60 62l14 30" stroke="#E8414F" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
-  +   '<path d="M53 60h16M88 56v8" stroke="#3B2340" stroke-width="5" stroke-linecap="round"/>'
-  +   '<circle cx="74" cy="92" r="6" fill="#3B2340"/>'
+  +   '<g class="wheel"><circle cx="30" cy="94" r="22" fill="none" stroke="#2E1B33" stroke-width="5"/>'
+  +    '<path d="M30 74v40M10 94h40M16 80l28 28M44 80L16 108" stroke="#7B5675" stroke-width="2.2"/>'
+  +    '<circle cx="30" cy="94" r="3.4" fill="#7B5675"/></g>'
+  +   '<g class="wheel"><circle cx="118" cy="94" r="22" fill="none" stroke="#2E1B33" stroke-width="5"/>'
+  +    '<path d="M118 74v40M98 94h40M104 80l28 28M132 80l-28 28" stroke="#7B5675" stroke-width="2.2"/>'
+  +    '<circle cx="118" cy="94" r="3.4" fill="#7B5675"/></g>'
+  +   '<path d="M72 94L56 64M56 64h48M72 94l32-30M72 94H30M56 64L30 94M104 64l14 30" stroke="#E8414F" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+  +   '<path d="M47 62h15" stroke="#2E1B33" stroke-width="6" stroke-linecap="round"/>'
+  +   '<path d="M104 64v-7h11" stroke="#2E1B33" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+  +   '<circle cx="72" cy="94" r="6" fill="#2E1B33"/>'
   +  '</g>'
   +  '<g class="guy">'
-  +   '<path d="M74 92l6-20 14-4" stroke="#2F6FB5" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
-  +   '<path d="M62 70l18-14 16 2" stroke="#FF7A59" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
-  +   '<path d="M86 56l10 6" stroke="url(#sk-' + id + ')" stroke-width="7" stroke-linecap="round"/>'
-  +   '<circle cx="92" cy="42" r="12" fill="url(#sk-' + id + ')"/>'
-  +   '<path d="M82 38q6-12 19-7 4 2 3 7-10-5-22 2z" fill="#4A2E22"/>'
-  +   '<circle cx="98" cy="42" r="2.4" fill="#3B2340"/>'
-  +   '<path d="M95 49q5 2 8-2" stroke="#3B2340" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
-  +   '<g class="bag"><rect x="52" y="58" width="24" height="22" rx="6" fill="#8E5AA6"/>'
-  +    '<rect x="56" y="50" width="17" height="13" rx="2" fill="#FFF6E2" stroke="#E6CFA8" stroke-width="1.5"/>'
-  +    '<path d="M56 51l8.5 7 8.5-7" stroke="#E8414F" stroke-width="2" fill="none"/></g>'
+  +   '<path d="M60 64l11 19-5 11" stroke="#245C9B" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+  +   '<path d="M56 67L88 55" stroke="url(#sh-' + id + ')" stroke-width="18" stroke-linecap="round"/>'
+  +   '<path d="M64 66l12 18-4 11" stroke="#2F6FB5" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+  +   '<path d="M70 96h10" stroke="#2E1B33" stroke-width="6" stroke-linecap="round"/>'
+  +   '<g><rect x="40" y="56" width="26" height="25" rx="7" fill="#8E5AA6"/>'
+  +    '<path d="M46 58l17-9" stroke="#7A4A92" stroke-width="4" stroke-linecap="round"/>'
+  +    '<rect x="45" y="44" width="19" height="15" rx="2.5" fill="#FFF6E2" stroke="#E3C9A0" stroke-width="1.5"/>'
+  +    '<path d="M45 45l9.5 7.5L64 45" stroke="#E8414F" stroke-width="2" fill="none"/></g>'
+  +   '<path d="M85 56l21 6" stroke="url(#sk-' + id + ')" stroke-width="7" stroke-linecap="round"/>'
+  +   '<circle cx="96" cy="42" r="12.5" fill="url(#sk-' + id + ')"/>'
+  +   '<path d="M84 43Q86 60 96 60Q106 60 108 43Q104 50 96 50Q88 50 84 43Z" fill="#43291E"/>'
+  +   '<path d="M101 50q4 1 6-2" stroke="#8A5236" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+  +   '<path d="M83.5 42a12.5 12.5 0 0 1 25 0q-6-5-12.5-5t-12.5 5z" fill="#43291E"/>'
+  +   '<path d="M108.4 40q4.6 3.2 -0.4 6.4" stroke="#D6855C" stroke-width="2.6" fill="none" stroke-linecap="round"/>'
+  +   '<circle cx="102" cy="40" r="2.3" fill="#2E1B33"/>'
   +  '</g>'
   + '</svg>';
 }
 
 const OBSTACLES = [
-  { w:34, h:46, svg:'<svg width="34" height="46" viewBox="0 0 34 46"><path d="M17 3l11 36H6z" fill="#FF8A3D"/><path d="M11 24h12l1.6 6H9.4z" fill="#FFF3E0"/><rect x="2" y="39" width="30" height="6" rx="3" fill="#E8713A"/></svg>' },
-  { w:42, h:50, svg:'<svg width="42" height="50" viewBox="0 0 42 50"><rect x="5" y="12" width="32" height="36" rx="5" fill="#6B8E9E"/><path d="M11 18v24M21 18v24M31 18v24" stroke="#54737F" stroke-width="3"/><rect x="2" y="6" width="38" height="8" rx="4" fill="#4E6B77"/></svg>' },
+  { w:34, h:46, svg:'<svg width="34" height="46" viewBox="0 0 34 46"><ellipse cx="17" cy="43" rx="16" ry="3.6" fill="rgba(55,18,48,.22)"/><path d="M17 3l11 36H6z" fill="#FF8A3D"/><path d="M11 24h12l1.6 6H9.4z" fill="#FFF3E0"/><rect x="2" y="39" width="30" height="6" rx="3" fill="#E8713A"/></svg>' },
+  { w:42, h:50, svg:'<svg width="42" height="50" viewBox="0 0 42 50"><ellipse cx="21" cy="47" rx="19" ry="3.6" fill="rgba(55,18,48,.22)"/><rect x="5" y="12" width="32" height="36" rx="5" fill="#6B8E9E"/><path d="M11 18v24M21 18v24M31 18v24" stroke="#54737F" stroke-width="3"/><rect x="2" y="6" width="38" height="8" rx="4" fill="#4E6B77"/></svg>' },
   { w:58, h:18, svg:'<svg width="58" height="18" viewBox="0 0 58 18"><ellipse cx="29" cy="12" rx="28" ry="6" fill="#7FC7E8" opacity=".9"/><ellipse cx="22" cy="10" rx="9" ry="2.6" fill="#DFF3FC" opacity=".8"/></svg>' },
-  { w:46, h:34, svg:'<svg width="46" height="34" viewBox="0 0 46 34"><path d="M12 32V16a9 9 0 0 1 18 0v16z" fill="#4A3A4F"/><path d="M13 10l4 7M29 10l-4 7" stroke="#4A3A4F" stroke-width="5" stroke-linecap="round"/><path d="M31 30q12 2 12-10" stroke="#4A3A4F" stroke-width="4.5" fill="none" stroke-linecap="round"/><circle cx="17" cy="20" r="1.8" fill="#FFD66B"/><circle cx="25" cy="20" r="1.8" fill="#FFD66B"/></svg>' },
-  { w:44, h:40, svg:'<svg width="44" height="40" viewBox="0 0 44 40"><rect x="3" y="6" width="38" height="32" rx="4" fill="#C08552"/><path d="M3 16h38M3 28h38M22 6v32" stroke="#9B6A42" stroke-width="3"/></svg>' }
+  { w:46, h:34, svg:'<svg width="46" height="34" viewBox="0 0 46 34"><ellipse cx="22" cy="31" rx="17" ry="3.2" fill="rgba(55,18,48,.22)"/><path d="M12 32V16a9 9 0 0 1 18 0v16z" fill="#4A3A4F"/><path d="M13 10l4 7M29 10l-4 7" stroke="#4A3A4F" stroke-width="5" stroke-linecap="round"/><path d="M31 30q12 2 12-10" stroke="#4A3A4F" stroke-width="4.5" fill="none" stroke-linecap="round"/><circle cx="17" cy="20" r="1.8" fill="#FFD66B"/><circle cx="25" cy="20" r="1.8" fill="#FFD66B"/></svg>' },
+  { w:44, h:40, svg:'<svg width="44" height="40" viewBox="0 0 44 40"><ellipse cx="22" cy="37" rx="19" ry="3.4" fill="rgba(55,18,48,.22)"/><rect x="3" y="6" width="38" height="32" rx="4" fill="#C08552"/><path d="M3 16h38M3 28h38M22 6v32" stroke="#9B6A42" stroke-width="3"/></svg>' }
 ];
 const HEART_SVG = '<svg width="30" height="28" viewBox="0 0 30 28"><path d="M15 26S1 17.5 1 9.3A8 8 0 0 1 15 5a8 8 0 0 1 14 4.3C29 17.5 15 26 15 26z" fill="#FF5E7D" stroke="#fff" stroke-width="2"/></svg>';
 
 const SKYLINE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='140'%3E%3Cg fill='rgba(104,52,96,0.22)'%3E%3Crect x='0' y='62' width='40' height='78'/%3E%3Crect x='46' y='34' width='30' height='106'/%3E%3Crect x='84' y='74' width='52' height='66'/%3E%3Crect x='144' y='48' width='26' height='92'/%3E%3Crect x='178' y='82' width='44' height='58'/%3E%3Crect x='228' y='56' width='32' height='84'/%3E%3C/g%3E%3C/svg%3E";
 const CLOUDS  = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='330' height='260'%3E%3Cg fill='rgba(255,255,255,0.9)'%3E%3Cellipse cx='54' cy='34' rx='42' ry='16'/%3E%3Cellipse cx='80' cy='26' rx='26' ry='15'/%3E%3Cellipse cx='232' cy='88' rx='46' ry='16'/%3E%3Cellipse cx='204' cy='80' rx='25' ry='14'/%3E%3Cellipse cx='120' cy='168' rx='38' ry='14'/%3E%3Cellipse cx='146' cy='161' rx='22' ry='12'/%3E%3Cellipse cx='288' cy='216' rx='34' ry='13'/%3E%3C/g%3E%3C/svg%3E";
+const TREES   = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='96'%3E%3Cg fill='rgba(74,30,72,0.55)'%3E%3Crect x='32' y='52' width='7' height='44'/%3E%3Ccircle cx='35' cy='48' r='19'/%3E%3Ccircle cx='22' cy='56' r='12'/%3E%3Ccircle cx='48' cy='57' r='11'/%3E%3Cellipse cx='112' cy='78' rx='23' ry='18'/%3E%3Cellipse cx='94' cy='84' rx='15' ry='12'/%3E%3Crect x='176' y='46' width='8' height='50'/%3E%3Ccircle cx='180' cy='42' r='21'/%3E%3Ccircle cx='164' cy='52' r='13'/%3E%3Ccircle cx='196' cy='53' r='12'/%3E%3Cellipse cx='232' cy='80' rx='18' ry='16'/%3E%3C/g%3E%3C/svg%3E";
 const DASHES  = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='5'%3E%3Crect width='38' height='5' rx='2.5' fill='rgba(255,255,255,0.75)'/%3E%3C/svg%3E";
 
 $("#heroSlot").innerHTML = riderSVG("svg-hero").replace('<svg id="svg-hero"','<svg id="svg-hero" class="hero"');
 $("#rider").innerHTML    = riderSVG("svg-rider");
 $("#far").style.backgroundImage  = 'url("' + SKYLINE + '")';
 $("#clouds").style.backgroundImage = 'url("' + CLOUDS + '")';
+$("#mid").style.backgroundImage    = 'url("' + TREES + '")';
 $("#dash").style.backgroundImage = 'url("' + DASHES + '")';
 
 /* ---- copy ---- */
@@ -662,19 +684,19 @@ const G = CONFIG.game;
 const stage=$("#stage"), actors=$("#actors"), riderEl=$("#rider"),
       meterFill=$("#meterFill"), heartsEl=$("#hearts"),
       bubbleEl=$("#bubble"), chipEl=$("#chip"), tapHintEl=$("#tapHint"),
-      farEl=$("#far"), dashEl=$("#dash"), cloudEl=$("#clouds");
+      farEl=$("#far"), dashEl=$("#dash"), cloudEl=$("#clouds"), midEl=$("#mid");
 
 let W=0, H=0, ROAD=0, RIDER_X=0, SCALE=1;
 let items=[], prog=0, t=0, speed=0, y=0, vy=0, onGround=true,
     hearts=G.hearts, invuln=0, slow=0, downFor=0, nextGap=0,
     running=false, raf=0, lastT=0, jumped=false, bubbleIdx=0,
-    scrollFar=0, scrollDash=0, scrollCloud=0, usedTouch=false;
+    scrollFar=0, scrollMid=0, scrollDash=0, scrollCloud=0, usedTouch=false;
 
 function measure(){
   const r = stage.getBoundingClientRect();
   W = r.width; H = r.height;
   ROAD = clamp(Math.round(H*0.34), 92, 215);
-  SCALE = clamp(H/470, 1, 1.45);
+  SCALE = clamp(H/660, 0.78, 1.06);
   stage.style.setProperty("--roadH", ROAD+"px");
   stage.style.setProperty("--groundY", ROAD+"px");   // everything stands on the road's edge
   stage.style.setProperty("--scale", SCALE.toFixed(3));
@@ -775,9 +797,11 @@ function step(now){
 
   // parallax
   scrollFar   = (scrollFar   + speed*0.22*dt) % 260;
+  scrollMid   = (scrollMid   + speed*0.52*dt) % 250;
   scrollDash  = (scrollDash  + speed*dt) % 70;
   scrollCloud = (scrollCloud + speed*0.07*dt) % 330;
   farEl.style.backgroundPosition   = (-scrollFar) + "px bottom";
+  midEl.style.backgroundPosition   = (-scrollMid) + "px bottom";
   dashEl.style.backgroundPosition  = (-scrollDash) + "px 0";
   cloudEl.style.backgroundPosition = (-scrollCloud) + "px 0";
 
@@ -786,7 +810,7 @@ function step(now){
     nextGap -= dt;
     if(nextGap <= 0) spawn();
   }
-  const rx1 = RIDER_X+16*SCALE, rx2 = RIDER_X+112*SCALE;   // his hitbox, forgiving at both ends
+  const rx1 = RIDER_X+30*SCALE, rx2 = RIDER_X+98*SCALE;   // hitbox hugs the bike, not the whole sprite
   for(let i=items.length-1;i>=0;i--){
     const it = items[i];
     it.x -= speed*dt;
