@@ -404,6 +404,13 @@ const CONFIG = {
 
   buttons: { whatsapp:"Confirm the date ✅", rematch:"Ride again? 🔁" },
 
+  // --- music: an original tarantella, synthesised live (no audio file) ---
+  music: {
+    on: true,          // set false for a silent ride
+    volume: 0.085,     // sits under the sound effects
+    eighth: 0.125      // smaller = faster. 0.125 is a brisk tarantella
+  },
+
   // --- game feel ---
   game: {
     rideSeconds: 15,     // tuned so a clean ride lands around 18s
@@ -487,6 +494,7 @@ const Sound = (function(){
   }
   return {
     init:init,
+    getCtx:function(){ return ctx; },
     get muted(){ return muted; },
     toggle:function(){ muted=!muted; try{ localStorage.setItem("sd_muted",muted?"1":"0"); }catch(e){} return muted; },
     jump:function(){ tone({type:"triangle",f:430,to:760,dur:0.16,vol:0.17}); },
@@ -505,10 +513,107 @@ const Sound = (function(){
   };
 })();
 
+/* ============================================================
+   music — an original Italian-style tarantella in A minor.
+   Mandolin melody over accordion stabs, walking bass and tambourine.
+   Nothing is downloaded: every note is synthesised on the fly.
+   ============================================================ */
+const Music = (function(){
+  const M = CONFIG.music;
+  // 16 bars x 6 quavers. 0 = rest.
+  const MEL = [
+    69,71,72,76,72,69,  67,69,71,74,71,67,  65,67,69,72,69,65,  64,65,68,71,68,64,
+    69,72,76,81,79,77,  79,77,76,74,71,67,  77,76,74,72,69,65,  76,74,72,71,68,64,
+    72,74,76,79,76,72,  71,72,74,79,74,71,  69,71,72,76,72,69,  68,69,71,76,71,68,
+    72,76,79,84,79,76,  71,74,79,83,79,74,  69,72,76,81,76,72,  71,68,64,64, 0, 0
+  ];
+  const Am=[60,64], G=[59,62], F=[57,60], E=[56,59], C=[55,60];
+  const CH   = [Am,G,F,E, Am,G,F,E, C,G,Am,E, C,G,Am,E];
+  const BASS = [45,43,41,40, 45,43,41,40, 48,43,45,40, 48,43,45,40];
+
+  let ctx=null, bus=null, noise=null, timer=0, step=0, nextT=0, running=false;
+  function hz(m){ return 440*Math.pow(2,(m-69)/12); }
+
+  function voice(type,f,t,dur,vol,detune){
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.type=type; o.frequency.value=f; if(detune) o.detune.value=detune;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(vol,t+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(bus); o.start(t); o.stop(t+dur+0.03);
+  }
+  function tamb(t,vol){
+    if(!noise) return;
+    const src=ctx.createBufferSource(); src.buffer=noise;
+    const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=5200;
+    const g=ctx.createGain();
+    g.gain.setValueAtTime(vol,t);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+0.07);
+    src.connect(hp); hp.connect(g); g.connect(bus);
+    src.start(t); src.stop(t+0.1);
+  }
+
+  function schedule(){
+    if(!running || !ctx) return;
+    const E8 = M.eighth;
+    while(nextT < ctx.currentTime + 0.3){
+      const i = step % 96, bar = Math.floor(i/6), e = i % 6;
+      const m = MEL[i];
+      if(m) voice("triangle", hz(m), nextT, E8*1.7, 0.30, 6);   // mandolin
+      if(e===0 || e===3){                                        // bass
+        voice("triangle", hz(BASS[bar] + (e===3?7:0)), nextT, 0.24, 0.34);
+      }else{                                                     // accordion stabs
+        CH[bar].forEach(function(n){ voice("sawtooth", hz(n), nextT, 0.13, 0.08); });
+      }
+      if(e===2 || e===5) tamb(nextT, 0.05);
+      nextT += E8; step++;
+    }
+  }
+
+  return {
+    start:function(){
+      if(!M.on) return;
+      ctx = Sound.init(); if(!ctx) return;
+      if(ctx.state==="suspended") ctx.resume();
+      if(!bus){
+        bus = ctx.createGain();
+        const lp = ctx.createBiquadFilter();
+        lp.type="lowpass"; lp.frequency.value=4200;
+        bus.connect(lp); lp.connect(ctx.destination);
+        const len=ctx.sampleRate*0.3;
+        noise=ctx.createBuffer(1,len,ctx.sampleRate);
+        const d=noise.getChannelData(0);
+        for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*(1-i/len);
+      }
+      bus.gain.cancelScheduledValues(ctx.currentTime);
+      bus.gain.setValueAtTime(Sound.muted?0:M.volume, ctx.currentTime);
+      if(running) return;
+      running=true; step=0; nextT=ctx.currentTime+0.08;
+      schedule();
+      timer=setInterval(schedule,60);
+    },
+    stop:function(fade){
+      if(!running) return;
+      running=false; clearInterval(timer); timer=0;
+      if(bus && ctx){
+        const t=ctx.currentTime;
+        bus.gain.cancelScheduledValues(t);
+        bus.gain.setValueAtTime(Math.max(0.0001,bus.gain.value),t);
+        bus.gain.exponentialRampToValueAtTime(0.0001,t+(fade||0.7));
+      }
+    },
+    setMuted:function(mut){
+      if(!bus || !ctx) return;
+      bus.gain.cancelScheduledValues(ctx.currentTime);
+      bus.gain.setValueAtTime(mut?0:M.volume, ctx.currentTime);
+    }
+  };
+})();
+
 const muteBtn = $("#mute");
 function paintMute(){ muteBtn.textContent = Sound.muted ? "🔇" : "🔊"; }
 paintMute();
-muteBtn.addEventListener("click", function(){ Sound.init(); Sound.toggle(); paintMute(); if(!Sound.muted) Sound.pop(); });
+muteBtn.addEventListener("click", function(){ Sound.init(); Sound.toggle(); paintMute(); Music.setMuted(Sound.muted); if(!Sound.muted) Sound.pop(); });
 function buzz(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
 
 /* ============================================================
@@ -670,6 +775,7 @@ function show(id){
 
 function runCountdown(){
   show("countdown");
+  Music.start();
   const box=$("#cdWords"); box.innerHTML="";
   const words=CONFIG.countdown.slice();
   const step = REDUCED ? 320 : 520;
@@ -883,6 +989,7 @@ function arrive(){
   items.forEach(function(it){ it.el.remove(); }); items=[];
   riderEl.classList.remove("blink");
   chip(CONFIG.ride.chips.arrive);
+  Music.stop(0.9);
   Sound.skid(); Sound.bell(); buzz([30,50,120]);
   later(function(){
     Sound.cheer(); Confetti.burst(130); buzz([30,50,30,50,160]);
