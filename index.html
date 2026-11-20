@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="robots" content="noindex, nofollow">
 <meta name="description" content="Special delivery">
-<title>Special Delivery 🚲</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚲</text></svg>">
+<title>Special Delivery 🛵</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛵</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -107,7 +107,7 @@ h1,h2,h3,p{margin:0}
 .sky{top:0;bottom:0;background:radial-gradient(70% 46% at 72% 16%,rgba(255,240,190,.75),rgba(255,240,190,0) 62%)}
 .sun{position:absolute;right:16%;top:12%;width:72px;height:72px;border-radius:50%;
   background:radial-gradient(circle,#FFF3C4,#FFC56B);box-shadow:0 0 46px rgba(255,200,110,.75);pointer-events:none}
-.far{bottom:var(--roadH);height:140px;background-repeat:repeat-x;background-position:0 bottom;opacity:.85}
+.far{bottom:var(--roadH);height:190px;background-repeat:repeat-x;background-position:0 bottom;opacity:.85}
 .clouds{top:4%;height:40%;background-repeat:repeat-x;background-size:auto 100%;opacity:.5}
 .mid{bottom:var(--roadH);height:96px;background-repeat:repeat-x;background-position:0 bottom;opacity:.95}
 .road{
@@ -345,28 +345,28 @@ const CONFIG = {
 
   intro: {
     kicker: "Special delivery",
-    vs: "{me} 🚲 ➜ {name}",
-    title: "{me} is cycling over with something for you 🚲✉️",
+    vs: "{me} 🛵 ➜ {name}",
+    title: "{me} is riding over with something for you 🛵✉️",
     sub: "He has one message to deliver. Tap to jump.",
     button: "Start the ride",
     fine: "By tapping you agree to be picked up tomorrow."
   },
 
   countdown: ["Ready…", "Set…"],
-  countdownFinal: "PEDAL! 🚲",
+  countdownFinal: "ANDIAMO! 🛵",
 
   ride: {
     meterTag: "DELIVERY TO {name}",
     tapHint: "Tap anywhere to jump 👆",
     // spoken along the way, at these points of the journey (0–1)
     bubbles: [
-      { at:0.06, text:"On my way 🚲" },
+      { at:0.06, text:"On my way 🛵" },
       { at:0.26, text:"That red light was more of a suggestion." },
       { at:0.46, text:"Halfway. Still handsome." },
       { at:0.66, text:"This envelope is heavier than it looks." },
       { at:0.86, text:"Almost there…" }
     ],
-    hits: ["Ouch.", "Saw that. Ignored it.", "Totally intentional.", "The bike started it."],
+    hits: ["Ouch.", "Saw that. Ignored it.", "Totally intentional.", "The Vespa started it."],
     tumble: "I'm fine! Everything's fine 😅",
     chips: { tumble:"WIPEOUT 💥", heart:"+1 ❤️", arrive:"DELIVERED!" }
   },
@@ -387,7 +387,7 @@ const CONFIG = {
       { em:"🚗", text:"I'll pick you up around 19:00." },
       { em:"🤫", text:"Where are we going? That's classified." }
     ],
-    sig: "Delivered by {me}. No bikes were harmed."
+    sig: "Delivered by {me}. No Vespas were harmed."
   },
 
   clues: {
@@ -411,7 +411,7 @@ const CONFIG = {
     speed0: 196,         // px/sec at the start
     speed1: 268,         // px/sec at the end
     gravity: 2300,
-    jumpV: 780,
+    jumpV: 830,
     hearts: 3,
     gapMin: 1.45,        // seconds between obstacles (never less: always jumpable)
     gapVar: 0.85
@@ -519,39 +519,50 @@ function riderSVG(id){
   + '<svg id="' + id + '" width="150" height="120" viewBox="0 0 150 120" aria-hidden="true">'
   +  '<defs>'
   +   '<linearGradient id="sk-' + id + '" x1="0" y1="0" x2="0" y2="1">'
-  +    '<stop offset="0" stop-color="#F7B890"/><stop offset="1" stop-color="#DD8F66"/></linearGradient>'
+  +    '<stop offset="0" stop-color="#F7BC95"/><stop offset="1" stop-color="#E09A6E"/></linearGradient>'
   +   '<linearGradient id="sh-' + id + '" x1="0" y1="0" x2="0" y2="1">'
   +    '<stop offset="0" stop-color="#FF8E6B"/><stop offset="1" stop-color="#EF5F3C"/></linearGradient>'
+  +   '<linearGradient id="vp-' + id + '" x1="0" y1="0" x2="0" y2="1">'
+  +    '<stop offset="0" stop-color="#9FE0CE"/><stop offset="1" stop-color="#5FBBA4"/></linearGradient>'
   +  '</defs>'
-  +  '<ellipse cx="74" cy="116" rx="56" ry="5" fill="rgba(55,18,48,.25)"/>'
+  +  '<ellipse cx="76" cy="117" rx="56" ry="4.5" fill="rgba(55,18,48,.25)"/>'
   +  '<g class="bike">'
-  +   '<g class="wheel"><circle cx="30" cy="94" r="22" fill="none" stroke="#2E1B33" stroke-width="5"/>'
-  +    '<path d="M30 74v40M10 94h40M16 80l28 28M44 80L16 108" stroke="#7B5675" stroke-width="2.2"/>'
-  +    '<circle cx="30" cy="94" r="3.4" fill="#7B5675"/></g>'
-  +   '<g class="wheel"><circle cx="118" cy="94" r="22" fill="none" stroke="#2E1B33" stroke-width="5"/>'
-  +    '<path d="M118 74v40M98 94h40M104 80l28 28M132 80l-28 28" stroke="#7B5675" stroke-width="2.2"/>'
-  +    '<circle cx="118" cy="94" r="3.4" fill="#7B5675"/></g>'
-  +   '<path d="M72 94L56 64M56 64h48M72 94l32-30M72 94H30M56 64L30 94M104 64l14 30" stroke="#E8414F" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
-  +   '<path d="M47 62h15" stroke="#2E1B33" stroke-width="6" stroke-linecap="round"/>'
-  +   '<path d="M104 64v-7h11" stroke="#2E1B33" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
-  +   '<circle cx="72" cy="94" r="6" fill="#2E1B33"/>'
+  +   '<g class="wheel"><circle cx="40" cy="102" r="16" fill="#2E1B33"/>'
+  +    '<circle cx="40" cy="102" r="7" fill="#C9BBD0"/>'
+  +    '<path d="M40 95v14M33 102h14" stroke="#8E7A96" stroke-width="2"/></g>'
+  +   '<g class="wheel"><circle cx="116" cy="102" r="16" fill="#2E1B33"/>'
+  +    '<circle cx="116" cy="102" r="7" fill="#C9BBD0"/>'
+  +    '<path d="M116 95v14M109 102h14" stroke="#8E7A96" stroke-width="2"/></g>'
+  +   '<rect x="54" y="86" width="54" height="12" rx="4" fill="url(#vp-' + id + ')"/>'
+  +   '<ellipse cx="44" cy="82" rx="27" ry="21" fill="url(#vp-' + id + ')"/>'
+  +   '<rect x="22" y="80" width="44" height="18" rx="7" fill="url(#vp-' + id + ')"/>'
+  +   '<rect x="56" y="95" width="26" height="7" rx="3.5" fill="#B9A6C0"/>'
+  +   '<path d="M100 92Q116 90 120 68Q122 56 112 54L104 56Q108 80 98 86Z" fill="url(#vp-' + id + ')"/>'
+  +   '<path d="M102 92Q116 74 130 92" stroke="url(#vp-' + id + ')" stroke-width="6" fill="none" stroke-linecap="round"/>'
+  +   '<rect x="30" y="57" width="44" height="12" rx="6" fill="#3B2340"/>'
+  +   '<circle cx="117" cy="63" r="7.5" fill="#FFF0C4" stroke="#3B2340" stroke-width="2"/>'
+  +   '<path d="M112 52h13" stroke="#3B2340" stroke-width="5" stroke-linecap="round"/>'
+  +   '<path d="M114 52v-9" stroke="#3B2340" stroke-width="2.6" stroke-linecap="round"/>'
+  +   '<circle cx="113" cy="40" r="4.5" fill="#C9BBD0" stroke="#3B2340" stroke-width="2"/>'
   +  '</g>'
   +  '<g class="guy">'
-  +   '<path d="M60 64l11 19-5 11" stroke="#245C9B" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
-  +   '<path d="M56 67L88 55" stroke="url(#sh-' + id + ')" stroke-width="18" stroke-linecap="round"/>'
-  +   '<path d="M64 66l12 18-4 11" stroke="#2F6FB5" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
-  +   '<path d="M70 96h10" stroke="#2E1B33" stroke-width="6" stroke-linecap="round"/>'
-  +   '<g><rect x="40" y="56" width="26" height="25" rx="7" fill="#8E5AA6"/>'
-  +    '<path d="M46 58l17-9" stroke="#7A4A92" stroke-width="4" stroke-linecap="round"/>'
-  +    '<rect x="45" y="44" width="19" height="15" rx="2.5" fill="#FFF6E2" stroke="#E3C9A0" stroke-width="1.5"/>'
-  +    '<path d="M45 45l9.5 7.5L64 45" stroke="#E8414F" stroke-width="2" fill="none"/></g>'
-  +   '<path d="M85 56l21 6" stroke="url(#sk-' + id + ')" stroke-width="7" stroke-linecap="round"/>'
-  +   '<circle cx="96" cy="42" r="12.5" fill="url(#sk-' + id + ')"/>'
-  +   '<path d="M84 43Q86 60 96 60Q106 60 108 43Q104 50 96 50Q88 50 84 43Z" fill="#43291E"/>'
-  +   '<path d="M101 50q4 1 6-2" stroke="#8A5236" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
-  +   '<path d="M83.5 42a12.5 12.5 0 0 1 25 0q-6-5-12.5-5t-12.5 5z" fill="#43291E"/>'
-  +   '<path d="M108.4 40q4.6 3.2 -0.4 6.4" stroke="#D6855C" stroke-width="2.6" fill="none" stroke-linecap="round"/>'
-  +   '<circle cx="102" cy="40" r="2.3" fill="#2E1B33"/>'
+  +   '<path d="M56 62l22 12 8 14" stroke="#245C9B" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+  +   '<g><rect x="34" y="34" width="23" height="24" rx="7" fill="#8E5AA6"/>'
+  +    '<path d="M53 37l12 12" stroke="#7A4A92" stroke-width="4" stroke-linecap="round"/>'
+  +    '<rect x="37" y="23" width="17" height="14" rx="2.5" fill="#FFF6E2" stroke="#E3C9A0" stroke-width="1.5"/>'
+  +    '<path d="M37 24l8.5 7L54 24" stroke="#E8414F" stroke-width="2" fill="none"/></g>'
+  +   '<path d="M56 60L68 38" stroke="url(#sh-' + id + ')" stroke-width="18" stroke-linecap="round"/>'
+  +   '<path d="M58 64l24 12 7 13" stroke="#2F6FB5" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+  +   '<path d="M86 90h11" stroke="#2E1B33" stroke-width="6" stroke-linecap="round"/>'
+  +   '<path d="M70 42l40 10" stroke="url(#sk-' + id + ')" stroke-width="7.5" stroke-linecap="round"/>'
+  +   '<circle cx="74" cy="27" r="12" fill="url(#sk-' + id + ')"/>'
+  +   '<path d="M63 31q2 11 11 11t11-11q-4 5-11 5t-11-5z" fill="#6B4228" opacity=".9"/>'
+  +   '<path d="M86 25q3 2.5 0 4.5" stroke="#D6855C" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+  +   '<path d="M80 36q3.5 1 5-1.5" stroke="#9A5F3C" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+  +   '<path d="M62.5 26a12 12 0 0 1 23.5-3q-7-4-14-1t-9.5 4z" fill="#3A2317"/>'
+  +   '<path d="M70 16q10-12 18-4 3 3-2 5-8-5-16-1z" fill="#3A2317"/>'
+  +   '<path d="M72 23h15q1 7-6 7-7 0-9-7z" fill="#2E1B33"/>'
+  +   '<path d="M72 23h-8" stroke="#2E1B33" stroke-width="2.2" stroke-linecap="round"/>'
   +  '</g>'
   + '</svg>';
 }
@@ -565,7 +576,7 @@ const OBSTACLES = [
 ];
 const HEART_SVG = '<svg width="30" height="28" viewBox="0 0 30 28"><path d="M15 26S1 17.5 1 9.3A8 8 0 0 1 15 5a8 8 0 0 1 14 4.3C29 17.5 15 26 15 26z" fill="#FF5E7D" stroke="#fff" stroke-width="2"/></svg>';
 
-const SKYLINE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='140'%3E%3Cg fill='rgba(104,52,96,0.22)'%3E%3Crect x='0' y='62' width='40' height='78'/%3E%3Crect x='46' y='34' width='30' height='106'/%3E%3Crect x='84' y='74' width='52' height='66'/%3E%3Crect x='144' y='48' width='26' height='92'/%3E%3Crect x='178' y='82' width='44' height='58'/%3E%3Crect x='228' y='56' width='32' height='84'/%3E%3C/g%3E%3C/svg%3E";
+const SKYLINE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='190'%3E%3Cg fill='rgba(88,36,84,0.46)'%3E%3Cpath d='M40 190v-46q80-18 160 0v46z'/%3E%3Cpath d='M49 158L54 88L60 74L66 88L71 158Z'/%3E%3Cpath d='M73 158L78 64L84 50L90 64L95 158Z'/%3E%3Cpath d='M97 158L102 44L108 30L114 44L119 158Z'/%3E%3Cpath d='M121 158L126 54L132 40L138 54L143 158Z'/%3E%3Cpath d='M145 158L150 76L156 62L162 76L167 158Z'/%3E%3Cpath d='M169 158L174 98L180 84L186 98L191 158Z'/%3E%3Crect x='106.5' y='14' width='3' height='14'/%3E%3Crect x='102' y='18' width='12' height='3'/%3E%3Crect x='238' y='118' width='46' height='72'/%3E%3Cpath d='M300 190v-84q16-20 38-12 24 8 38-6 16-16 28 4v98z'/%3E%3Crect x='306' y='60' width='7' height='50'/%3E%3Ccircle cx='309.5' cy='56' r='6'/%3E%3Crect x='308' y='40' width='3' height='13'/%3E%3Crect x='303.5' y='44' width='12' height='3'/%3E%3Crect x='418' y='136' width='26' height='54'/%3E%3Cpath d='M452 190V96q14-46 28 0v94z'/%3E%3Crect x='506' y='124' width='40' height='66'/%3E%3Cpath d='M580 190V72q4-18 18-20 62 34 90 138z'/%3E%3Crect x='716' y='130' width='34' height='60'/%3E%3Crect x='760' y='108' width='28' height='82'/%3E%3Crect x='800' y='140' width='54' height='50'/%3E%3Crect x='862' y='120' width='30' height='70'/%3E%3C/g%3E%3Cg fill='rgba(255,238,247,0.22)'%3E%3Crect x='70' y='158' width='6' height='24' rx='3'/%3E%3Crect x='104' y='158' width='6' height='24' rx='3'/%3E%3Crect x='138' y='158' width='6' height='24' rx='3'/%3E%3Crect x='170' y='158' width='6' height='24' rx='3'/%3E%3Crect x='316' y='126' width='22' height='11' rx='5.5'/%3E%3Crect x='348' y='126' width='22' height='11' rx='5.5'/%3E%3Crect x='380' y='126' width='20' height='11' rx='5.5'/%3E%3Crect x='316' y='154' width='22' height='11' rx='5.5'/%3E%3Crect x='348' y='154' width='22' height='11' rx='5.5'/%3E%3Crect x='380' y='154' width='20' height='11' rx='5.5'/%3E%3Crect x='460' y='112' width='6' height='8' rx='3'/%3E%3Crect x='472' y='130' width='6' height='8' rx='3'/%3E%3Crect x='460' y='150' width='6' height='8' rx='3'/%3E%3Crect x='584' y='100' width='44' height='2.5'/%3E%3Crect x='584' y='120' width='52' height='2.5'/%3E%3Crect x='584' y='140' width='60' height='2.5'/%3E%3Crect x='584' y='160' width='68' height='2.5'/%3E%3C/g%3E%3C/svg%3E";
 const CLOUDS  = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='330' height='260'%3E%3Cg fill='rgba(255,255,255,0.9)'%3E%3Cellipse cx='54' cy='34' rx='42' ry='16'/%3E%3Cellipse cx='80' cy='26' rx='26' ry='15'/%3E%3Cellipse cx='232' cy='88' rx='46' ry='16'/%3E%3Cellipse cx='204' cy='80' rx='25' ry='14'/%3E%3Cellipse cx='120' cy='168' rx='38' ry='14'/%3E%3Cellipse cx='146' cy='161' rx='22' ry='12'/%3E%3Cellipse cx='288' cy='216' rx='34' ry='13'/%3E%3C/g%3E%3C/svg%3E";
 const TREES   = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='96'%3E%3Cg fill='rgba(74,30,72,0.55)'%3E%3Crect x='32' y='52' width='7' height='44'/%3E%3Ccircle cx='35' cy='48' r='19'/%3E%3Ccircle cx='22' cy='56' r='12'/%3E%3Ccircle cx='48' cy='57' r='11'/%3E%3Cellipse cx='112' cy='78' rx='23' ry='18'/%3E%3Cellipse cx='94' cy='84' rx='15' ry='12'/%3E%3Crect x='176' y='46' width='8' height='50'/%3E%3Ccircle cx='180' cy='42' r='21'/%3E%3Ccircle cx='164' cy='52' r='13'/%3E%3Ccircle cx='196' cy='53' r='12'/%3E%3Cellipse cx='232' cy='80' rx='18' ry='16'/%3E%3C/g%3E%3C/svg%3E";
 const DASHES  = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='5'%3E%3Crect width='38' height='5' rx='2.5' fill='rgba(255,255,255,0.75)'/%3E%3C/svg%3E";
@@ -689,7 +700,7 @@ const stage=$("#stage"), actors=$("#actors"), riderEl=$("#rider"),
 let W=0, H=0, ROAD=0, RIDER_X=0, SCALE=1;
 let items=[], prog=0, t=0, speed=0, y=0, vy=0, onGround=true,
     hearts=G.hearts, invuln=0, slow=0, downFor=0, nextGap=0,
-    running=false, raf=0, lastT=0, jumped=false, bubbleIdx=0,
+    running=false, raf=0, lastT=0, jumped=false, jumpBuffer=0, bubbleIdx=0,
     scrollFar=0, scrollMid=0, scrollDash=0, scrollCloud=0, usedTouch=false;
 
 function measure(){
@@ -763,13 +774,16 @@ function hitSomething(){
   }
 }
 
+function doJump(){
+  vy = -G.jumpV*Math.sqrt(SCALE); onGround = false; jumpBuffer = 0;
+  Sound.jump();
+  if(!jumped){ jumped = true; tapHintEl.classList.add("hide"); }
+}
 function jump(){
   if(!running || downFor>0) return;
   Sound.init();
-  if(!onGround) return;
-  vy = -G.jumpV*Math.sqrt(SCALE); onGround = false;
-  Sound.jump();
-  if(!jumped){ jumped = true; tapHintEl.classList.add("hide"); }
+  if(!onGround){ jumpBuffer = 0.16; return; }   // remember it; it fires the moment he lands
+  doJump();
 }
 
 function step(now){
@@ -793,10 +807,11 @@ function step(now){
     vy += G.gravity*dt; y -= vy*dt;
     if(y<=0){ y=0; vy=0; if(!onGround){ onGround=true; Sound.land(); } }
   }
+  if(jumpBuffer>0){ jumpBuffer -= dt; if(onGround && jumpBuffer>0) doJump(); }
   riderEl.style.transform = "translate3d(0," + (-y) + "px,0)";
 
   // parallax
-  scrollFar   = (scrollFar   + speed*0.22*dt) % 260;
+  scrollFar   = (scrollFar   + speed*0.22*dt) % 900;
   scrollMid   = (scrollMid   + speed*0.52*dt) % 250;
   scrollDash  = (scrollDash  + speed*dt) % 70;
   scrollCloud = (scrollCloud + speed*0.07*dt) % 330;
@@ -810,14 +825,15 @@ function step(now){
     nextGap -= dt;
     if(nextGap <= 0) spawn();
   }
-  const rx1 = RIDER_X+30*SCALE, rx2 = RIDER_X+98*SCALE;   // hitbox hugs the bike, not the whole sprite
+  const rx1 = RIDER_X+34*SCALE, rx2 = RIDER_X+102*SCALE;   // hitbox hugs the Vespa, not the whole sprite
   for(let i=items.length-1;i>=0;i--){
     const it = items[i];
     it.x -= speed*dt;
     it.el.style.transform = "translate3d(" + it.x + "px,0,0)";
     if(it.x < -90){ it.el.remove(); items.splice(i,1); continue; }
     if(it.dead) continue;
-    const overlap = (it.x < rx2) && (it.x + it.w > rx1);
+    const pad = it.heart ? 0 : 6*SCALE;          // forgiving edges on obstacles
+    const overlap = (it.x + pad < rx2) && (it.x + it.w - pad > rx1);
     if(!overlap) continue;
     if(it.heart){
       if(Math.abs(y - it.yOff) < 52*SCALE){
@@ -851,7 +867,7 @@ function startRide(){
   items.forEach(function(it){ it.el.remove(); }); items=[];
   prog=0; t=0; y=0; vy=0; onGround=true; speed=G.speed0;
   hearts=G.hearts; invuln=0; slow=0; downFor=0; nextGap=1.1;
-  jumped=false; bubbleIdx=0; running=true;
+  jumped=false; jumpBuffer=0; bubbleIdx=0; running=true;
   riderEl.classList.remove("blink","down");
   riderEl.style.transform = "translate3d(0,0,0)";
   tapHintEl.classList.remove("hide");
